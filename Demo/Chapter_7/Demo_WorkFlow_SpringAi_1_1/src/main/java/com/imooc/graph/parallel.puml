@@ -1,0 +1,30 @@
+@startuml parallel
+skinparam usecaseFontSize 14
+skinparam usecaseStereotypeFontSize 12
+skinparam hexagonFontSize 14
+skinparam hexagonStereotypeFontSize 12
+title "parallel"
+footer
+
+powered by spring-ai-alibaba
+end footer
+circle start as __START__
+circle stop as __END__
+usecase "RouteMakingNode"<<Node>>
+usecase "TripPlannerNode"<<Node>>
+usecase "BudgetNode"<<Node>>
+usecase "AggregationNode"<<Node>>
+usecase "TaskAssignmentNode"<<Node>>
+hexagon "check state" as condition1<<Condition>>
+"__START__" -down-> "TaskAssignmentNode"
+"AggregationNode" -down-> "__END__"
+"TaskAssignmentNode" -down-> "RouteMakingNode"
+"TaskAssignmentNode" -down-> "TripPlannerNode"
+"RouteMakingNode" -down-> "BudgetNode"
+"TripPlannerNode" -down-> "BudgetNode"
+"BudgetNode" .down.> "condition1"
+"condition1" .down.> "AggregationNode": "continue"
+'"BudgetNode" .down.> "AggregationNode": "continue"
+"condition1" .down.> "TripPlannerNode": "back"
+'"BudgetNode" .down.> "TripPlannerNode": "back"
+@enduml

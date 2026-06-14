@@ -1,0 +1,7 @@
+spring:
+  ai:
+    dashscope:
+      api-key: 不需要填
+
+server:
+  port: 8080

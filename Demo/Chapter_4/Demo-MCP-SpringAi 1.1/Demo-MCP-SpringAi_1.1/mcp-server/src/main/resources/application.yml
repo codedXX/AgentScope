@@ -1,0 +1,21 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: imooc-weather-mcp-server-springAi_1.1
+  ai:
+    dashscope:
+      api-key: sk-255506ca196b48f38e686b3e82efac58
+    mcp:
+      server:
+        # MCP服务器名称
+        name: imooc-weather-mcp-server-springAi_1.1
+        version: 0.0.1
+        type: SYNC
+        protocol: SSE
+        annotation-scanner:
+          enabled: true
+        # MCP服务器地址
+        sse-message-endpoint: /mcp/sse/weather
+        sse-endpoint: /mcp/sse/weather
+

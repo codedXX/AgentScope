@@ -1,0 +1,20 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: imooc-weather-mcp-client-springAi_1.1
+  ai:
+    dashscope:
+      api-key: sk-255506ca196b48f38e686b3e82efac58
+    mcp:
+      # MCP客户端
+      client:
+        name: imooc-weather-mcp-client
+        version: 1.0.0
+        sse:
+          connections:
+            # MCP服务端的名称
+            imooc-weather-mcp-server-springAi_1:
+              # MCP服务端的地址
+              url: http://localhost:8081
+              sse-endpoint: /mcp/sse/weather
