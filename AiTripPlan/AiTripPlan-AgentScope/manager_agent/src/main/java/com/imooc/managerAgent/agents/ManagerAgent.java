@@ -5,6 +5,7 @@ import com.imooc.commons.utils.LangFuseUtils;
 import com.imooc.managerAgent.tool.RemoteAgentTool;
 import io.agentscope.core.ReActAgent;
 import io.agentscope.core.agent.Event;
+import io.agentscope.core.message.Msg;
 import io.agentscope.core.hook.ActingChunkEvent;
 import io.agentscope.core.hook.Hook;
 import io.agentscope.core.hook.HookEvent;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import com.imooc.commons.utils.AgentUtils;
 import com.imooc.commons.utils.ToolUtils;
+import com.imooc.commons.utils.PromptUtils;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -117,8 +119,8 @@ public class ManagerAgent {
                 .hook(new planHook(planNotebook))
                 //工具包
                 .toolkit(toolkit)
-                //结构化输出
-                .structuredOutputReminder(StructuredOutputReminder.PROMPT)
+                //结构化输出 (TOOL_CHOICE: 强制走工具调用产出结构化JSON, 适配qwen等支持工具调用的模型, 比PROMPT稳定)
+                .structuredOutputReminder(StructuredOutputReminder.TOOL_CHOICE)
                 .build();
 
 
@@ -146,16 +148,19 @@ public class ManagerAgent {
 //        - 每个子任务要注明调用的Agent
 //        """;
 
-        Flux<Event> stream = agentUtils.streamResponse(agent,prompt);
+        //构建Prompt
+        PromptUtils promptUtils = new PromptUtils();
 
-        //把响应打印出来
-        ResponseSchema result =
-                stream
-                //阻塞直到结束
-                .blockLast()
-                .getMessage()
-                .getStructuredData(ResponseSchema.class);
+        //阻塞调用, 跑完整个 ReAct + 计划(planNotebook)流程, 拿到最终回复消息
+        Msg reply = agent
+                .call(List.of(promptUtils.getPrompt(prompt)))
+                .block();
 
+        //ResponseSchema 只有一个 response 字符串字段, 直接取最终回复文本即可。
+        //(本版本 SDK 下 planNotebook 计划流程不会产出 _structured_output,
+        // 故不走 getStructuredData, 直接用最终文本, 结果等价)
+        ResponseSchema result = new ResponseSchema();
+        result.response = (reply == null) ? "Agent未返回任何结果" : reply.getTextContent();
         return result;
 
     }

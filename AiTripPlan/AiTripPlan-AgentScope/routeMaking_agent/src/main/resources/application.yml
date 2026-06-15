@@ -27,8 +27,8 @@ agentscope:
 
 
 agent:
-  model_name: ${MODEL_NAME}
-  alibaba_dashscope_key: ${ALIBABA_DASHCOPE_KEY}
+  model_name: qwen3.7-max
+  alibaba_dashscope_key: sk-255506ca196b48f38e686b3e82efac58
 
 mcp:
-  baidu_map_addr: ${BAIDU_MAP_ADDR}
+  baidu_map_addr: https://mcp.map.baidu.com/sse?ak=uL9isweCUF63UYjNAqI2z2JyCX1N9x5I
